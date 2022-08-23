@@ -1,0 +1,36 @@
+{% extends 'singlepage/layout.html' %}
+{% block script %}
+<script>
+     window.onpopstate = function(event){
+          console.log('event ',event.state.section)
+          showSection(event.state.section)
+     }
+
+     function showSection(sectionNumber){
+          fetch(`/section/${sectionNumber}`)
+          .then(response => response.text())
+          .then(data => {
+               console.log(data);
+               document.querySelector("#content").innerText = data;
+          })
+     }
+
+     document.addEventListener('DOMContentLoaded',function (){
+          document.querySelectorAll('button').forEach(button => {
+               button.onclick = function (){
+                    console.log(this.dataset.section);
+                    let section = this.dataset.section;
+                    history.pushState({section},"",`section${section}`);
+                    showSection(section);
+               }
+          })
+     })
+</script>
+{% endblock script %}
+{% block body %}
+<h1>Hello Page 2</h1>
+<button data-section="1">section 1</button>
+<button data-section="2">section 2</button>
+<button data-section="3">section 3</button>
+<div id="content"></div>
+{% endblock body %}

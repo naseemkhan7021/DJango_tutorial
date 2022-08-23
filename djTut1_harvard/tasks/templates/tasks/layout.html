@@ -1,0 +1,13 @@
+{% comment %} {% load static %} {% endcomment %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{pageTitle}}</title>
+    {% comment %} import style {% endcomment %}
+    {% comment %} <link href="{% static '/newyear/style.css' %}" rel="stylesheet"></link> {% endcomment %}
+  </head>
+  <body>
+     {% block body %}
+     {% endblock %}
+  </body>
+</html>

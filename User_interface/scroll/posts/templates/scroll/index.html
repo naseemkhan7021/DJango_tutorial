@@ -1,0 +1,117 @@
+{% extends 'scroll/layout.html' %}
+{% block style %}
+     <style>
+          @keyframes hide {
+               0% {
+                    opacity: 1;
+                    height: 100%;
+                    line-height: 100%;
+                    padding: 20px;
+                    margin-bottom: 10px;
+                }
+                75% {
+                    opacity: 0;
+                    height: 100%;
+                    line-height: 100%;
+                    padding: 20px;
+                    margin-bottom: 10px;
+                }
+                100% {
+                    opacity: 0;
+                    height: 0px;
+                    line-height: 0px;
+                    padding: 0px;
+                    margin-bottom: 0px;
+                }
+          }
+
+          .post {
+               background-color: #77dd11;
+               padding: 20px;
+               margin: 10px;
+               animation: hide 2s forwards;
+               animation-play-state: paused;
+          }
+
+          body {
+               padding-bottom: 50px;
+          }
+
+          .hide{
+               float:right;
+          }
+     </style>
+{% endblock style %}
+
+{% block script %}
+<script>
+     // Start with first post
+     let counter = 1;
+
+     // Load posts 20 at a time
+     const quantity = 20;
+
+     // When DOM loads, render the first 20 posts
+     document.addEventListener('DOMContentLoaded',load)
+     // If scrolled to bottom, load the next 20 posts
+     window.onscroll = ()=>{
+          /*if (window.innerHeight + window.scrollY>= document.body.offsetHeight){
+               load();
+          }*/
+          if (window.innerHeight + window.scrollY>= document.body.offsetHeight){
+               load();
+          }
+          if(window.scrollY <= window.innerHeight){
+               load();
+          }
+     }
+
+     // If hide button is clicked, delete the post
+     document.addEventListener('click',event => {
+          const element = event.target;
+          if(element.className === 'hide'){
+               element.parentElement.style.animationPlayState = 'running';
+               element.parentElement.addEventListener('animationend',() => {
+                    element.parentElement.remove()
+               })
+          }
+
+          if(document.body.offsetHeight <= window.innerHeight){
+               load();
+          }
+     })
+
+     // Load next set of posts
+     function load(){
+          // Set start and end post numbers, and update counter
+          const start = counter;
+          const end = start+quantity-1;
+          counter = end+1;
+          // Get new posts and add posts
+          fetch(`/posts?start=${start}&end=${end}`)
+          .then(response => response.json())
+          .then(data => {
+               data.posts.forEach(addPosts)
+          })
+     }
+     // Add a new post with given contents to DOM
+     function addPosts(content){
+          // Create new post
+          const post = document.createElement('div');
+          post.className = 'post';
+          // post.innerText = content;
+          post.innerHTML = `${content} <button class="hide">Hide</button>`;
+          // Add post to DOM
+          document.getElementById('posts').append(post);
+     }
+</script>
+{% endblock script %}
+
+{% block body %}
+<h1 align="center">Posts</h1>
+<div id="posts">
+</div>
+<div class="loading" align="center">
+     <img src="https://i.stack.imgur.com/hzk6C.gif" alt="loading" srcset="" width="150px">
+</div>
+{% endblock body %}

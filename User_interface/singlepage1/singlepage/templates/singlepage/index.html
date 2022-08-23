@@ -1,0 +1,29 @@
+{% extends 'singlepage/layouts/layout.html' %}
+{% block script %}
+<script>
+     function section(sectionNumber){
+          fetch(`/sections/${sectionNumber}`)
+          .then(response => response.text())
+          .then(data => {
+               console.log(data);
+               document.querySelector("#content").innerText = data;
+          })
+     }
+     document.addEventListener("DOMContentLoaded",function () {
+          document.querySelectorAll("button").forEach(button => {
+               button.onclick = function (){
+                    console.log(this.dataset.section);
+                    section(this.dataset.section);
+               }
+          });
+     });
+</script>
+{% endblock script %}
+{% block body %}
+<h1>This is one page Dynamic loaded content</h1>
+<button data-section="1">Section 1</button>
+<button data-section="2">Section 2</button>
+<button data-section="3">Section 3</button>
+<div id="content"></div>
+
+{% endblock body %}
